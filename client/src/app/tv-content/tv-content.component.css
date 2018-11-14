@@ -1,0 +1,10 @@
+ol>li{
+  background-color :slategray;
+  color:#f0f0f0;
+  font-size: 12px;
+  border-radius: 25px;
+  margin-bottom:10px;
+}
+span{
+  display: inline-block;
+}

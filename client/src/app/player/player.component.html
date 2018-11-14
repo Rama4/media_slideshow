@@ -1,0 +1,12 @@
+<button class="fullscreen_control"><i class="fa fa-times" aria-hidden="true"></i></button>
+<div *ngIf="loaded == true">
+    <vg-player *ngIf="!image"  (onPlayerReady)="onPlayerReady($event)">
+        <video [vgMedia]="media" [src]="get_current_item()" #media id="singleVideo" preload="auto" controls crossorigin>
+        </video>
+    </vg-player>
+    <img *ngIf="image"  src="{{image}}" alt="First slide">
+</div>
+<h3 *ngIf="loaded == false">Loading...</h3>
+
+
+<!--class="d-block w-100 center-fit"-->

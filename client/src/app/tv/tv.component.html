@@ -1,0 +1,47 @@
+<div class="container text-center">
+    <div class="row">
+    
+    <div class="col-md-3">
+        <h2>Tv List</h2>
+    
+        <a class="btn btn-primary btn-block" routerLink="/tvs/create" >Create TV</a>
+        <ul class="list-group">
+            <li *ngFor="let tv of tvs_list" class="list-group-item" >
+                {{tv.name}}
+                <a *ngIf="auth.isLoggedIn()" class="btn btn-sm btn-warning" routerLink = "/tvs/{{tv.name}}">View/Edit</a>
+                <a *ngIf="!auth.isLoggedIn()" class="btn btn-sm btn-primary" routerLink = "/tvs/{{tv.name}}">View</a>
+                <a class="btn btn-sm btn-primary" routerLink = "/tvs/{{tv.name}}/play">Play</a>
+            </li>
+        </ul>
+    </div>
+    
+    <div *ngIf = "auth.isLoggedIn()" class="col-md-9">
+        <h3>Choose which Files to show in which TV:</h3>
+        <p>click on a cell to show/not show a file, for its respective tv</p>
+        <p [ngClass]="result ? 'success' : 'fail'">{{message}}</p>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th scope="col">Files</th>
+                      <th scope="col" *ngFor="let tv of tvs_list">{{tv.name}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let file of files_list">
+                      <th scope="row">{{file.name}}</th>
+                      <td *ngFor="let tv of tvs_list" (click)="changeDisp(tv.name,file._id)">
+                          <i *ngIf="disp_arr[tv.name][file._id]==true" class="fa fa-check-circle" style="color:turquoise;"></i>
+                          <i *ngIf="disp_arr[tv.name][file._id]==false" class="fa fa-times-circle" ></i>
+                      </td>
+                    </tr>
+                  </tbody>
+            </table>
+        </div>
+        <br>
+        <button class="btn btn-block btn-primary" (click)="saveDispMatrix()">Save</button>
+    </div>
+    
+        
+    </div>
+</div>

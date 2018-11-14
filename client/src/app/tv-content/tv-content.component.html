@@ -1,0 +1,52 @@
+<!--import stylesheet for drag and drop highlight-->
+<link rel="stylesheet" href="node_modules/ng-drag-drop/style.css">
+
+<div class="container text-center">
+    <h2 *ngIf="f==0">{{tvId}}</h2>
+    <form *ngIf="auth.isLoggedIn()" #TVForm="ngForm" (ngSubmit)="toggleEdit(TVForm.value)" >
+        <button *ngIf="f==0" (click)="toggleEdit()" class="btn"><i class="fa fa-pencil fa-sm" ></i></button>
+        <div *ngIf="f==1" class="form-group">
+            <label for="name" >Name</label>
+            <input type="text" class="form-control" id="name" name="name" [(ngModel)]="name" required>
+        </div>
+        <button type="submit" *ngIf="f==1" (click)="toggleEdit()" class="btn"><i class="fa fa-check fa-sm" style="color:green;"></i></button>
+        <button *ngIf="f==1" (click)="cancelEdit()" class="btn"><i class="fa fa-close fa-sm" ></i></button>
+    </form>
+    
+    <div *ngIf="server_message" class="row"><span>{{server_message}}</span></div>
+    
+    <div *ngIf="auth.isLoggedIn()" class="container">
+        <div class="row">
+            <div class="col-md-4 col-sm-12 col-xs-12" id="uploadbox">
+                <h3 class="text-center">Rearrange Files:</h3>
+            </div>
+            <div class="col-md-8 col-sm-12 col-xs-12">
+                <h3 class="text-center">Files List</h3>
+                <ol class="list-group">
+                    <li *ngFor="let file of files; let i = index;" 
+                        droppable
+                        draggable
+                        [dragScope]="states[f]"
+                        [dropScope]="'Save'"
+                        [dragData]="i"
+                        (onDrag)="onFileDrag(i)"
+                        (onDragLeave)="updatePos(i)"
+                        (onDrop)="onFileDrop($event)"
+                        class="list-group-item">
+                            <span class="col-md-10 left-align">{{file.name}}</span>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!auth.isLoggedIn()" class="container">
+        <h3 class="text-center">Files List</h3>
+        <ol class="list-group">
+            <li *ngFor="let file of files; let i = index;" class="list-group-item">
+                <span class="col-md-10 left-align">{{file.name}}</span>
+            </li>
+        </ol>
+    </div>
+
+</div>

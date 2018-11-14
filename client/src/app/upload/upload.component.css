@@ -1,0 +1,58 @@
+.add-files-btn {
+  float: right;
+}
+
+:host {
+  height: 100%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.actions {
+  justify-content: flex-end;
+}
+
+.container {
+  height: 100%;
+}
+
+.progress-bar{
+  background-color: #2265b2;
+  height: 10px;
+}
+
+.modal-content{
+  background-color: #40464b;
+}
+.modal-title, .modal-body{
+  color:#e0e0e0;
+}
+.close{
+  color:white;
+}
+
+ol>li{
+  background-color :slategray;
+  color:#f0f0f0;
+  font-size: 12px;
+  border-radius: 25px;
+  margin-bottom:10px;
+}
+span{
+  display: inline-block;
+}
+
+/*#uploadbox{*/
+/*  z-index: 10;*/
+  /*position: fixed;*/
+/*}*/
+
+/*@media (max-width:767px){*/
+/*    #uploadbox{*/
+/*        position:relative;*/
+/*        z-index:0;*/
+/*    }*/
+/*}*/
+
+

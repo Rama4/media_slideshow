@@ -1,0 +1,25 @@
+<div class="container">
+
+  <div class="row">
+    
+    <div class="container" style = "width:33%; margin: 25px auto;">
+
+      <h1 class="form-signin-heading" style="text-align: center">Sign in</h1>
+      <p class="lead">Not a member? Please <a routerLink="/register">register</a> instead.</p>
+  
+      <form (submit)="login()">
+        <div class="<form-group></form-group>">
+          <label for="email">Email address</label>
+          <input type="email" class="form-control" name="email" placeholder="Enter email" [(ngModel)]="credentials.email">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" name="password" placeholder="Password" [(ngModel)]="credentials.password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Sign in!</button>
+      </form>
+
+    </div>
+  </div>
+
+</div>

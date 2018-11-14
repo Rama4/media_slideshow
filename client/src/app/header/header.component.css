@@ -1,0 +1,11 @@
+/*underline links when hovered upon */
+.nav-link {
+      transition: border-color .2s;
+    -moz-transition: border-color .2s;
+    -webkit-transition: border-color .2s;
+    -o-transition: border-color .2s;
+    border-bottom: solid 3px transparent;
+}
+.nav-link:hover, .nav-link:hover{
+    border-bottom-color: white;
+}

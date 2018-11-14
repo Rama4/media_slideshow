@@ -1,0 +1,57 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12" id="uploadbox">
+            <h3 style="text-align:center;">Upload Files</h3>
+            <p>You can upload images or videos here.</p>
+            <p>For ppts, please convert it into a video before uploading it. <a target="_blank" href="https://support.office.com/en-us/article/turn-your-presentation-into-a-video-c140551f-cb37-4818-b5d4-3e30815c3e83">Click to see how its done</a>.</p>
+            <button type="button" class="btn btn-lg btn-primary btn-block" data-toggle="modal" data-target="#myModal" >Upload</button>        
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+            <h3 style="text-align:center;">Files List</h3>
+            <ol class="list-group">
+                <li *ngFor="let file of uploaded_files; let i = index;" class="list-group-item">
+                    <span class="col-md-10 left-align">{{file.name}}</span>
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <h1>Upload Files</h1>
+                    <input type="file" #file style="display: none" (change)="onFilesAdded()" multiple />
+                    <button [disabled]="uploading" class="btn btn-light add-files-btn" (click)="addFiles()">
+                      Add Files
+                    </button>
+                </div>
+                <button (click)="onClose()" type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:#f0f0f0">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <li *ngFor="let file of filesToUpload">
+                        <h4>{{file.name}}</h4>
+                        <div *ngIf="fileInfo[file.name]['width']>0" class="progress-bar" [style.width] = "fileInfo[file.name]['width']+'%'" ></div>
+                        <i *ngIf="fileInfo[file.name]['done']" class="fa fa-check-circle" style="color:turquoise"></i>
+                    </li>
+                </ul>                
+                <ul>
+                    <li *ngFor="let file of filesUploadedInSession">
+                        <h4>{{file}}</h4>
+                        <div *ngIf="fileInfo[file]['width']>0" class="progress-bar" [style.width] = "fileInfo[file.name]['width']+'%'" ></div>
+                        <i *ngIf="fileInfo[file]['done']" class="fa fa-check-circle" style="color:turquoise"></i>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button *ngIf="showCancelButton" (click)="onClose()" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" [disabled]="!canBeClosed" (click)="onUpload()" >{{primaryButtonText}}</button>
+            </div>
+        </div>
+    </div>
+</div>
