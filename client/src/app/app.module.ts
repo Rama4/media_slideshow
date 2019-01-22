@@ -28,6 +28,7 @@ import { AuthenticationService } from './authentication.service';
 import { AuthGuardService } from './auth-guard.service';
 import { PlayerComponent } from './player/player.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { VideoJsPlayerComponent } from './video-js-player/video-js-player.component';
 
 
 const routes: Routes = [
@@ -39,7 +40,7 @@ const routes: Routes = [
   { path: 'tvs', component: TvComponent },
   { path: 'tvs/create', component: TvCreateComponent, canActivate: [AuthGuardService] },
   { path: 'tvs/:tvId', component: TvContentComponent },
-  { path: 'tvs/:tvId/play', component: PlayerComponent },
+  { path: 'tvs/:tvId/play', component: VideoJsPlayerComponent },
   { path: 'notfound', component: NotFoundComponent },
   { path: '**', redirectTo: 'notfound'  }
 ];
@@ -57,7 +58,8 @@ const routes: Routes = [
     TvContentComponent,
     TvCreateComponent,
     PlayerComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    VideoJsPlayerComponent
   ],
   imports: [
     BrowserModule,

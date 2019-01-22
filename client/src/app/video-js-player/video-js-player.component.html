@@ -1,0 +1,8 @@
+<link href="node_modules/video.js/dist/video-js.min.css" rel="stylesheet">
+
+<video *ngIf="videoUrl" id="video_player_id"
+    class="video-js vjs-default-skin vjs-fullscreen"
+    controls preload="auto"
+    >
+    <source [src]="videoUrl" type="video/mp4">
+</video>

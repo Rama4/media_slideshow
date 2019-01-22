@@ -30,6 +30,7 @@
     "popper.js": "^1.14.4",
     "rxjs": "^6.2.2",
     "rxjs-compat": "^6.3.3",
+    "video.js": "^7.4.1",
     "videogular2": "^6.3.0",
     "zone.js": "~0.8.26"
   },

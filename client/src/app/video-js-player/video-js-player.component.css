@@ -1,0 +1,26 @@
+/*full height only, not width*/
+.vjs-full-window {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+
+/*fullscreen*/
+.video-js.vjs-fullscreen {
+  position: fixed;
+  overflow: hidden;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+.video-js:-webkit-full-screen {
+  width: 100% !important;
+  height: 100% !important;
+}
+.video-js.vjs-fullscreen.vjs-user-inactive {
+  cursor: none;
+}

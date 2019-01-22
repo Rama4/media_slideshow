@@ -14,7 +14,7 @@ export class PlayerComponent implements OnInit {
     urls = [];
     currentIndex : number = -1;
     currentItem = null;
-    api: VgAPI;
+    Videogular2api: VgAPI;
     tvId: string;
     url_prefix : string = "https://angular-dev-rama4.c9users.io/api/download/";
 
@@ -133,9 +133,9 @@ export class PlayerComponent implements OnInit {
     {
       console.log("player ready");
       console.log(this.urls.length)
-        this.api = api;
-        this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe(this.playVideo.bind(this));
-        this.api.getDefaultMedia().subscriptions.ended.subscribe(this.nextVideo.bind(this));
+        this.Videogular2api = api;
+        this.Videogular2api.getDefaultMedia().subscriptions.loadedMetadata.subscribe(this.playVideo.bind(this));
+        this.Videogular2api.getDefaultMedia().subscriptions.ended.subscribe(this.nextVideo.bind(this));
     }
     
     get_current_item()
@@ -157,6 +157,6 @@ export class PlayerComponent implements OnInit {
     playVideo()
     {
       console.log("play video");
-        this.api.play();
+        this.Videogular2api.play();
     }
 }
