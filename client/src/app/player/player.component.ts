@@ -27,23 +27,6 @@ export class PlayerComponent implements OnInit {
     
     
     @ViewChildren('video') video: QueryList<ElementRef>;
-
-    toFullScreen()
-    {
-      // if(!this.video || this.video.toArray().length == 0)
-        // return;
-      // console.log(this.media)
-      let elem = this.video.toArray()[0].nativeElement as HTMLVideoElement;
-      if (elem.requestFullscreen)
-      {
-        elem.requestFullscreen();
-      } 
-      // else if (elem.mozRequestFullScreen) {
-      //   elem.mozRequestFullScreen();
-      // } else if (elem.webkitRequestFullscreen) {
-      //   elem.webkitRequestFullscreen();
-      // }
-    }
     
       
     constructor(private route: ActivatedRoute, private auth: AuthenticationService){}
