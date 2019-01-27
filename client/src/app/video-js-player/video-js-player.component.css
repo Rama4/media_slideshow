@@ -39,7 +39,7 @@ img{
     z-index: 1000;
     /*box-sizing: border-box;*/
 }
-
+    
 .fullscreen_control{
    margin: 10px auto;
    z-index: 2000;

@@ -5,7 +5,7 @@
 </div>
 
 <div *ngIf="loaded == true">
-    <div *ngIf = "showVideo" >
+    <div *ngIf = "showVideo"   >
         <video
             #videoPlayer
             id="video_player_id"
@@ -17,6 +17,6 @@
         </video>    
     </div>
     
-    <img *ngIf="image"  src="{{image}}" alt="First slide">
+    <img *ngIf="image"  src="image" alt="First slide">
 </div>
 <h3 *ngIf="loaded == false">Loading...</h3>

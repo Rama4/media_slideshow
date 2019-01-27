@@ -60,13 +60,11 @@ export class VideoJsPlayerComponent implements OnInit {
           // start the timer
           let x = Obj.isVideoFile(Obj.urls[Obj.currentIndex].name) ? 1 : 0;
           
-          Obj.imageSubscription = timer(1000, 3000).subscribe(()=>
+          Obj.imageSubscription = timer(1000, 5000).subscribe(()=>
           {
             
             // console.log("done arr=");
             // console.log(Obj.get_done_arr());
-            
-                
             
             // if current url is video
             if(Obj.isVideoFile(Obj.urls[Obj.currentIndex].name))
@@ -78,30 +76,48 @@ export class VideoJsPlayerComponent implements OnInit {
               {
                 Obj.image = null;
                 Obj.showVideo = true;
-                Obj.videoUrl = Obj.defaultVideoUrl;
+                // Obj.videoUrl = Obj.defaultVideoUrl;
                 
-                Obj.get_video_player( (playerNana) =>
+                // Obj.get_video_player( (playerNana) =>
+                // {
+                //     console.log(playerNana);
+                //     if(playerNana)
+                //     {
+                //       console.log("setting src and playing");
+                //       Obj.videoUrl = Obj.urls[Obj.currentIndex].url;
+                //       Obj.videoJSplayer.src(
+                //       {
+                //         type: "video/mp4",
+                //         src: Obj.urls[Obj.currentIndex].url
+                //       });
+                //       // Todo: sync issue fix here (synchronous)
+                //       Obj.videoJSplayer.load();
+                //       Obj.videoJSplayer.play();
+                //     }
+                // });                
+                
+          
+                Obj.set_video_player_src( (playerNana) =>
                 {
-                    console.log(playerNana);
-                    if(playerNana)
+                    // playerNana.load();
+                    console.log("playng()")
+                    playerNana.play();
+                    console.log(Obj.videoUrl)
+                    x=0;
+                    playerNana.on('end',()=>
                     {
-                      console.log("setting src and playing");
-                      Obj.videoUrl = Obj.urls[Obj.currentIndex].url;
-                      Obj.videoJSplayer.src(
-                      {
-                        type: "video/mp4",
-                        src: Obj.urls[Obj.currentIndex].url
-                      });
-                      // Todo: sync issue fix here (synchronous)
-                      Obj.videoJSplayer.load();
-                      Obj.videoJSplayer.play();
-                    }
+                      console.log("endeddedded")
+                    })
+                    
                 });
-                
-                console.log(Obj.videoUrl)
-                x=0;
               }
               
+              if(Obj.videoJSplayer)
+              { 
+                console.log("videoJSplayer exists")
+                if(!Obj.videoJSplayer.ended())
+                  console.log("video still playing")
+              }
               if(Obj.videoJSplayer && Obj.videoJSplayer.ended())
               {
                 console.log("video ended");
@@ -132,7 +148,7 @@ export class VideoJsPlayerComponent implements OnInit {
                 
               // display current image
               Obj.image = Obj.urls[Obj.currentIndex].url;
-              Obj.videoUrl = null;
+              // Obj.videoUrl = null;
               console.log(`image src = ${Obj.image}`)
               // move on to next url
               Obj.currentIndex = (Obj.currentIndex + 1) % Obj.urls.length;
@@ -150,13 +166,36 @@ export class VideoJsPlayerComponent implements OnInit {
       );
     }
     
-    get_video_player(callback)
+    // get_video_player(callback)
+    // {
+    //   console.log("get_video_player()");
+      
+    //   if(!this.videoJSplayer)
+    //   {
+    //     // this.loaded = true;
+    //     let Obj = this;
+    //     console.log(`loaded = ${this.loaded}`)
+        
+    //     setTimeout(() =>
+    //     {
+    //       console.log(`video=`)
+    //       console.log(Obj.video.toArray())
+    //       Obj.videoJSplayer = videojs(Obj.video.toArray()[0].nativeElement);
+    //       Obj.videoJSplayer
+    //       return callback(Obj.videoJSplayer)
+    //     })
+        
+    //   }
+    //   callback(this.videoJSplayer);
+    // }    
+    
+    set_video_player_src(callback)
     {
       console.log("get_video_player()");
       
       if(!this.videoJSplayer)
       {
-        // this.loaded = true;
+        this.loaded = true;
         let Obj = this;
         console.log(`loaded = ${this.loaded}`)
         
@@ -165,11 +204,32 @@ export class VideoJsPlayerComponent implements OnInit {
           console.log(`video=`)
           console.log(Obj.video.toArray())
           Obj.videoJSplayer = videojs(Obj.video.toArray()[0].nativeElement);
+          console.log("setting src if");
+          Obj.videoUrl = Obj.urls[Obj.currentIndex].url;
+          Obj.videoJSplayer.src(
+          {
+            type: "video/mp4",
+            src: Obj.urls[Obj.currentIndex].url
+          });
           return callback(Obj.videoJSplayer)
-        })
+        });
         
       }
-      callback(this.videoJSplayer);
+      else
+      {
+        setTimeout(() =>
+        {
+          this.videoJSplayer = videojs(this.video.toArray()[0].nativeElement);
+          console.log("setting src else");
+          this.videoUrl = this.urls[this.currentIndex].url;
+          this.videoJSplayer.src(
+          {
+            type: "video/mp4",
+            src: this.urls[this.currentIndex].url
+          });
+          callback(this.videoJSplayer);
+        });
+      } 
     }
   
     isImageFile(path : string) : boolean
@@ -197,12 +257,92 @@ export class VideoJsPlayerComponent implements OnInit {
       }
     }
     
+    // set_video_player_src(callback)
+    // {
+    //   Obj.get_video_player( (playerNana) =>
+    //   {
+    //       console.log(playerNana);
+    //       if(playerNana)
+    //       {
+            
+    //       }
+    //   }
     
-    
-    get_done_arr()
-    {
-      return this.urls.map( f => f.done);
-    }
-    
+  // ngOnInit()
+    // {
+    //   console.log("on init")
+    //   this.tvId = this.route.snapshot.paramMap.get('tvId');
+    //   this.image = null;
+    //   let Obj = this;
+    //   this.auth.get_tv_details(this.tvId).subscribe
+    //     (
+    //       (tv) => 
+    //       {
+    //         console.log(tv);
+    //         // get urls and initialize array of urls
+    //         Obj.urls = tv.data.files.map((f)=>
+    //         {
+    //           f.url = Obj.url_prefix+f._id; 
+    //           f.done = false;
+    //           return f;
+    //         });
+    //         console.log(Obj.urls);
+            
+    //         Obj.currentIndex = 0;
+    //         Obj.loaded = true;
+    //         console.log("loaded")
+    //         // start the timer
+    //         Obj.imageSubscription = timer(1000, 3000).subscribe(()=>
+    //         {
+    //           // if current url is video
+    //           if(Obj.isVideoFile(Obj.urls[Obj.currentIndex].name))
+    //           { 
+    //             // if( window.innerHeight != screen.height) {
+    //             //   // browser is fullscreen
+    //             //   console.log("fullscreen da");
+    //             //   Obj.toFullScreen();
+    //             // }
+                
+    //             console.log("current item is video");
+    //             console.log(`currentIndex = ${Obj.currentIndex}`)
+    //             // if video is not yet over, don't do anything
+    //             if(!Obj.urls[Obj.currentIndex].done)
+    //             {
+    //               Obj.image = null; // optional
+    //               console.log("video not yet done");
+    //             }
+    //             else
+    //             {
+    //               console.log("video done");
+    //               // mark current url as not done (so it can play again in next cycle)
+    //               Obj.urls[Obj.currentIndex].done = false
+    //               // go to next url
+    //               Obj.currentIndex = (Obj.currentIndex + 1) % Obj.urls.length;
+    //               console.log(`currentIndex = ${Obj.currentIndex}`)
+    //             }
+    //           }
+    //           else
+    //           {
+    //             console.log("current item is image");
+    //             console.log(`currentIndex = ${Obj.currentIndex}`)
+    //             // display current image
+    //             Obj.image = Obj.urls[Obj.currentIndex].url;
+    //             // move on to next url
+    //             Obj.currentIndex = (Obj.currentIndex + 1) % Obj.urls.length;
+    //             console.log(`currentIndex = ${Obj.currentIndex}`)
+    //           }
+    //         });
+            
+    //         setTimeout(()=>
+    //         {
+    //           console.log("time over.");
+    //           this.image = 
+    //         });
+            
+    //       },
+    //       (err) => {console.log(err);}
+    //     );
+    // }
+        
     
 }

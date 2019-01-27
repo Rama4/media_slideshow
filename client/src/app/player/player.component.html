@@ -1,6 +1,8 @@
-<button class="fullscreen_control"><i class="fa fa-times" aria-hidden="true"></i></button>
+<div class="fullscreen_control_wrapper">
+    <a class="fullscreen_control" routerLink="/tvs"><i class="fa fa-times" ></i></a>
+</div>
 <div *ngIf="loaded == true">
-    <vg-player *ngIf="!image"  (onPlayerReady)="onPlayerReady($event)">
+    <vg-player class="videoFullScreen" *ngIf="!image"  (onPlayerReady)="onPlayerReady($event)">
         <video [vgMedia]="media" [src]="get_current_item()" #media id="singleVideo" preload="auto" controls crossorigin>
         </video>
     </vg-player>

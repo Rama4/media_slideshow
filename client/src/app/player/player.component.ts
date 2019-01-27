@@ -1,8 +1,15 @@
-import { Component, OnInit, ViewChildren, ElementRef, QueryList } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { VgAPI } from 'videogular2/core';
 import { AuthenticationService } from '../authentication.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { timer, Subscription } from 'rxjs';
+
+enum MediaType {
+  IMG,
+  VID,
+  URL,
+  PPT,
+  ERR
+};
 
 @Component({
   selector: 'app-player',
@@ -11,111 +18,100 @@ import { timer, Subscription } from 'rxjs';
 })
 export class PlayerComponent implements OnInit {
   
-    urls = [];
-    currentIndex : number = -1;
-    currentItem = null;
-    Videogular2api: VgAPI;
-    tvId: string;
+    playlist = [];
+    currentIndex : number = 0;
+    Videogular2api : VgAPI;
+    tvId : string;
     url_prefix : string = "https://angular-dev-rama4.c9users.io/api/download/";
-
-    selectedIndex : number = 0;
-    imageSubscription: Subscription = null;
-    loaded = false;
+    loaded : boolean = false;
+    image = null;
+    timeOutIDs : number[] = []; // stores all subscriptions that need to be undone during ngOnDestroy
+    imageTimeout : number = 3000; // default timeout is 3s
     
-    sliderArray;
-    image;
-    
-    
-    @ViewChildren('video') video: QueryList<ElementRef>;
-    
-      
     constructor(private route: ActivatedRoute, private auth: AuthenticationService){}
-
+    
     ngOnInit()
     {
-      this.tvId = this.route.snapshot.paramMap.get('tvId');
-      this.image = null;
+      // store 'this' in an object, so we can access it in the subscription
       let Obj = this;
+      // get playlist from server
+      this.tvId = this.route.snapshot.paramMap.get('tvId');
       this.auth.get_tv_details(this.tvId).subscribe
         (
           (tv) => 
           {
-            console.log(tv);
-            // get urls and initialize array of urls
-            Obj.urls = tv.data.files.map((f)=>
+            // get playlist and add another key "url" to each item
+            Obj.playlist = tv.data.files.map((f)=>
             {
               f.url = Obj.url_prefix+f._id; 
-              f.done = false;
               return f;
             });
-            console.log(Obj.urls);
-            
+            Obj.print("ngOnInit: playlist=", Obj.playlist);
             Obj.currentIndex = 0;
             Obj.loaded = true;
-            // start the timer
-            Obj.imageSubscription = timer(1000, 3000).subscribe(()=>
-            {
-              // if current url is video
-              if(Obj.isVideoFile(Obj.urls[Obj.currentIndex].name))
-              { 
-                // if( window.innerHeight != screen.height) {
-                //   // browser is fullscreen
-                //   console.log("fullscreen da");
-                //   Obj.toFullScreen();
-                // }
-                
-                console.log("init current item is video");
               
-                // if video is not yet over, don't do anything
-                if(!Obj.urls[Obj.currentIndex].done)
-                {
-                  Obj.image = null; // optoinal
-                  console.log("init video not yet done");
-                }
-                else
-                { 
-                  console.log("init video done");
-                  // mark current url as not done (so it can play again in next cycle)
-                  Obj.urls[Obj.currentIndex].done = !Obj.urls[Obj.currentIndex].done;
-                  // go to next url
-                  Obj.currentIndex = (Obj.currentIndex + 1) % Obj.urls.length;
-                }
-              }
-              else
-              { 
-                console.log("init current item is image");
-                // disp;lay current image
-                Obj.image = Obj.urls[Obj.currentIndex].url;
-                // move on to next url
-                Obj.currentIndex = (Obj.currentIndex + 1) % Obj.urls.length;
-              }
-            }); 
+            // start playing afer 1s ( so that img and video are present, afer 'loaded' = true)
+            // add subscription for ngOnDestroy    
+            Obj.timeOutIDs.push( setTimeout(() =>
+            {
+              console.log("loaded")
+              Obj.dispPlaylistItem(); 
+              // if first item is video, play it
+              Obj.playVideo();
+            }, 1000));
           },
           (err) => {console.log(err);}
         );
     }
     
-    
-    ngOnDestroy()
+    // prints a variable name, with its value
+    print(str,variable)
     {
-        this.imageSubscription.unsubscribe();
+      console.log(`${str} ${JSON.stringify(variable, null, 4)}`);
     }
     
-    isImageFile(path : string) : boolean
+    dispPlaylistItem()
     {
-      return path.match(/.(jpg|jpeg|png|gif)$/i) != null;
+        this.print(`dispPlaylistItem: currentIndex=`, this.currentIndex);
+        if(this.getMediaType(this.playlist[this.currentIndex].name) == MediaType.VID)
+        {
+            console.log("dispPlaylistItem: video")
+            this.image = null;              
+        }
+        else if(this.getMediaType(this.playlist[this.currentIndex].name) == MediaType.IMG)
+        {
+            console.log("dispPlaylistItem: image")
+            this.image = this.playlist[this.currentIndex].url;
+            // go to next item after 'imageTimeout' seconds
+            this.timeOutIDs.push( setTimeout( () =>
+            {
+              console.log("dispPlaylistItem: img time over. moving to next item");
+              this.currentIndex = (this.currentIndex+1)%(this.playlist.length);
+              // go to next item
+              this.dispPlaylistItem();
+            }, this.imageTimeout));
+        }
+        else
+        {
+          console.log("dispPlaylistItem: Error: unknown file type!")
+        }
     }
     
-    isVideoFile(path : string) : boolean
+    getMediaType(path: string) : number
     {
-      return path.match(/.(mp4|wmv|webm|flv|avi|3gp|ogg)$/i) != null;
+      if(path.match(/.(jpg|jpeg|png|gif)$/i))
+        return MediaType.IMG;
+      if(path.match(/.(mp4|wmv|webm|flv|avi|3gp|ogg)$/i))
+        return MediaType.VID;
+      return MediaType.ERR;
     }
     
+    //----------------------------------------
     // video player controle
+    //----------------------------------------
     onPlayerReady(api: VgAPI)
     {
-      console.log("player ready");
-      console.log(this.urls.length)
+        console.log("onPlayerReady");
         this.Videogular2api = api;
         this.Videogular2api.getDefaultMedia().subscriptions.loadedMetadata.subscribe(this.playVideo.bind(this));
         this.Videogular2api.getDefaultMedia().subscriptions.ended.subscribe(this.nextVideo.bind(this));
@@ -123,23 +119,46 @@ export class PlayerComponent implements OnInit {
     
     get_current_item()
     {
-      console.log("get_current_item")
-      if(this.currentIndex < 0)console.log("Error! index cannot be negative");
-      return this.urls[this.currentIndex].url;
-      
+        if(this.currentIndex < 0)console.log("get_current_item: Error! index cannot be negative");
+        return this.playlist[this.currentIndex].url;
     }
 
     nextVideo()
-    {
-        console.log(`nextvideo:`);
-        this.urls[this.currentIndex].done = !this.urls[this.currentIndex].done;
-        console.log(this.urls);
-        this.currentIndex = (this.currentIndex+1)%(this.urls.length); // optional
+    {   // when current video has ended, move to next item
+        this.currentIndex = (this.currentIndex+1)%(this.playlist.length);
+        this.print(`nextvideo: currentIndex=`, this.currentIndex)
+        
+        if(this.getMediaType(this.playlist[this.currentIndex].name) == MediaType.IMG)
+        {
+          console.log("nextvideo: next is image")
+          this.image = "abc";
+          this.dispPlaylistItem();
+        }
+        else if(this.getMediaType(this.playlist[this.currentIndex].name) == MediaType.VID)
+        {
+          console.log("nextvideo: next is video")
+          this.image = null;
+          this.dispPlaylistItem();
+          // if there is only 1 item in the playlist, and its a video, play() it.
+          if(this.playlist.length == 1)
+            this.playVideo();
+        }
     }
 
     playVideo()
     {
-      console.log("play video");
+        console.log("playVideo");
         this.Videogular2api.play();
     }
+    
+    ngOnDestroy()
+    {   // destroy all subscriptions
+        this.timeOutIDs.forEach(id =>
+        {
+          clearTimeout(id);
+          this.print(`ngOnDestroy: clearTimeout id=`,id)
+        });
+    }
+    
+    
 }

@@ -11,6 +11,7 @@
                 <a *ngIf="auth.isLoggedIn()" class="btn btn-sm btn-warning" routerLink = "/tvs/{{tv.name}}">View/Edit</a>
                 <a *ngIf="!auth.isLoggedIn()" class="btn btn-sm btn-primary" routerLink = "/tvs/{{tv.name}}">View</a>
                 <a class="btn btn-sm btn-primary" routerLink = "/tvs/{{tv.name}}/play">Play</a>
+                <a class="btn btn-sm btn-primary" routerLink = "/tvs/{{tv.name}}/play2">Play2</a>
             </li>
         </ul>
     </div>
@@ -18,6 +19,7 @@
     <div *ngIf = "auth.isLoggedIn()" class="col-md-9">
         <h3>Choose which Files to show in which TV:</h3>
         <p>click on a cell to show/not show a file, for its respective tv</p>
+        <button class="btn btn-block btn-primary" (click)="saveDispMatrix()">Save</button>
         <p [ngClass]="result ? 'success' : 'fail'">{{message}}</p>
         <div class="table-responsive">
             <table class="table table-bordered">
@@ -38,10 +40,6 @@
                   </tbody>
             </table>
         </div>
-        <br>
-        <button class="btn btn-block btn-primary" (click)="saveDispMatrix()">Save</button>
     </div>
-    
-        
     </div>
 </div>

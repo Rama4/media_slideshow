@@ -41,6 +41,7 @@ const routes: Routes = [
   { path: 'tvs/create', component: TvCreateComponent, canActivate: [AuthGuardService] },
   { path: 'tvs/:tvId', component: TvContentComponent },
   { path: 'tvs/:tvId/play', component: VideoJsPlayerComponent },
+  { path: 'tvs/:tvId/play2', component: PlayerComponent },
   { path: 'notfound', component: NotFoundComponent },
   { path: '**', redirectTo: 'notfound'  }
 ];
